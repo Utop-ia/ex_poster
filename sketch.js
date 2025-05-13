@@ -6,7 +6,7 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(800, 800, "svg");
+  createCanvas(595, 842, "svg");
   addDownloadButton();
 
   rectMode(CENTER);
