@@ -1,10 +1,3 @@
-const testo = "WTF";
-const fontSize = 120;
-const parti = 40;
-const sfasamento = 4;
-
-//
-
 /** @type {Font} */
 let font;
 
@@ -13,11 +6,13 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(400, 400, "svg");
+  createCanvas(800, 800, "svg");
   addDownloadButton();
 
   rectMode(CENTER);
   angleMode(DEGREES);
+  strokeJoin(ROUND);
+  strokeCap(ROUND);
 
   noLoop(); // Opzionale
 }
@@ -25,27 +20,38 @@ function setup() {
 function draw() {
   clear(); // Non cancellare!
 
-  textFont(font);
-  textLeading(fontSize);
-  textSize(fontSize);
+  const nShapes = 10; // quante forme disegnare
+  const minVerts = 5,
+    maxVerts = 12;
 
-  const text_width = textWidth(testo);
-  const h_parti = fontSize / parti;
+  for (let s = 0; s < nShapes; s++) {
+    // Genera i vertici in posizioni totalmente casuali
+    const nVerts = floor(random(minVerts, maxVerts + 1));
+    const pts = [];
+    for (let i = 0; i < nVerts; i++) {
+      pts.push({
+        x: random(width),
+        y: random(height),
+      });
+    }
 
-  noStroke();
-  fill(0);
+    // Colori a contrasto
+    const fillCol = random([0, 255]);
+    fill(fillCol);
+    stroke(fillCol === 0 ? 255 : 0);
+    strokeWeight(random(1, 4));
 
-  for (let i = 0; i < parti; i++) {
-    push();
-    translate(text_width / 2, 0);
-    translate(random(-sfasamento, sfasamento), 0);
-
-    beginClip();
-    rect(0, i * h_parti + h_parti / 2, text_width, h_parti);
-    endClip();
-
-    textSVG(testo, -text_width / 2, fontSize);
-
-    pop();
+    // Disegna la forma smussata
+    beginShape();
+    // duplico l’ultimo punto per iniziare la curva in modo morbido
+    curveVertex(pts[nVerts - 1].x, pts[nVerts - 1].y);
+    // punto intermedio
+    for (let p of pts) {
+      curveVertex(p.x, p.y);
+    }
+    // duplico i primi due per chiudere bene
+    curveVertex(pts[0].x, pts[0].y);
+    curveVertex(pts[1].x, pts[1].y);
+    endShape(CLOSE);
   }
 }
